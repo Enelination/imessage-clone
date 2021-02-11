@@ -81,4 +81,34 @@ app.get("/get/conversationList", (req, res) => {
   });
 });
 
+app.get("/get/conversation", (req, res) => {
+  const id = req.query.id;
+
+  mongoData.find({ _id: id }, (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(200).send(data);
+    }
+  });
+});
+
+app.get("/get/lastMessage", (req, res) => {
+  const id = req.query.id;
+
+  mongoData.find({ _id: id }, (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      let convData = data[0].conversation;
+
+      convData.sort((b, a) => {
+        return a.timestamp - b.timestamp;
+      });
+
+      res.status(200).send(convData[0]);
+    }
+  });
+});
+
 app.listen(port, () => console.log(`listening on port:${port}`));
